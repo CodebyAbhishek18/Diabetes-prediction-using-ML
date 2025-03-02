@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #450bc3, #752733);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            background: #eb9f9f;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        /* Form grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Inputs */
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #3a14b9;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #b4bd0526;
+        }
+
+        /* Full width for odd input fields */
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .predict-btn {
+            background: #2F80ED;
+            color: white;
+        }
+
+        .predict-btn:hover {
+            background: #1E5BBF;
+        }
+
+        .try-again-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .try-again-btn:hover {
+            background: #d32f2f;
+        }
+        
+     /* Typing Animation */
+     @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+
+    /* Blinking Cursor */
+    @keyframes blink {
+        50% { border-color: transparent; }
+    }
+
+    .animated-heading {
+        font-size: 2.5rem;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 4px solid black;
+        display: inline-block;
+        width: 0;
+        animation: typing 4s steps(25, end) infinite, blink 0.7s infinite;
+    }
+
+    /* Adding delay to restart */
+    @keyframes reset {
+        0%, 90% { width: 0; }
+        100% { width: 0; }
+    }
+
+    .animated-heading::after {
+        content: "";
+        display: inline-block;
+        width: 0;
+        animation: reset 4s infinite;
+    }
+
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="animated-heading">Diabetes Prediction</h1>
+
+        <!-- Show prediction result if available -->
+        {% if prediction_text %}
+            <h2 style="color: green;" id="predictionResult">{{ prediction_text }}</h2>
+        {% endif %}
+
+        <form id="diabetesForm" action="/predict" method="post">
+            <div class="form-grid">
+                <div>
+                    <label>Pregnancies:</label>
+                    <input type="number" name="pregnancies" required value="{{ request.form['pregnancies'] if 'pregnancies' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Glucose:</label>
+                    <input type="number" name="glucose" required value="{{ request.form['glucose'] if 'glucose' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Blood Pressure:</label>
+                    <input type="number" name="blood_pressure" required value="{{ request.form['blood_pressure'] if 'blood_pressure' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Skin Thickness:</label>
+                    <input type="number" name="skin_thickness" required value="{{ request.form['skin_thickness'] if 'skin_thickness' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Insulin:</label>
+                    <input type="number" name="insulin" required value="{{ request.form['insulin'] if 'insulin' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>BMI:</label>
+                    <input type="number" name="bmi" required step="any" value="{{ request.form['bmi'] if 'bmi' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Diabetes Pedigree Function:</label>
+                    <input type="number" name="pedigree" required step="any" value="{{ request.form['pedigree'] if 'pedigree' in request.form else '' }}">
+                </div>
+
+                <div>
+                    <label>Age:</label>
+                    <input type="number" name="age" required value="{{ request.form['age'] if 'age' in request.form else '' }}">
+                </div>
+            </div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button type="submit" class="predict-btn">Predict</button>
+                <button type="button" class="try-again-btn" onclick="clearForm()">Try Again</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function clearForm() {
+            let form = document.getElementById("diabetesForm");
+
+            // Clear all input fields
+            form.querySelectorAll("input").forEach(input => input.value = "");
+
+            // Keep the prediction result visible
+            let result = document.getElementById("predictionResult");
+            if (result) {
+                result.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
